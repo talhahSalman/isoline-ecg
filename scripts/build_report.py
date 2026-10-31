@@ -142,12 +142,12 @@ def f3(x):
 
 # ───────────────────────────── the pipeline diagram ─────────────────────────────
 def draw_pipeline(path):
-    fig, ax = plt.subplots(figsize=(10, 4.3), dpi=200)
-    ax.set_xlim(0, 100), ax.set_ylim(0, 43), ax.axis("off")
+    fig, ax = plt.subplots(figsize=(10, 4.7), dpi=200)
+    ax.set_xlim(0, 100), ax.set_ylim(0, 48), ax.axis("off")
 
-    def box(x, y, w, h, title, sub="", fill="#ffffff", edge=INK, tc=INK):
+    def box(x, y, w, h, title, sub="", fill="#ffffff", edge=INK, tc=INK, size=8.6):
         ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.25,rounding_size=1.2", fc=fill, ec=edge, lw=1.3))
-        ax.text(x + w / 2, y + h / 2 + (1.6 if sub else 0), title, ha="center", va="center", fontsize=8.6, fontweight="bold", color=tc)
+        ax.text(x + w / 2, y + h / 2 + (1.6 if sub else 0), title, ha="center", va="center", fontsize=size, fontweight="bold", color=tc)
         if sub:
             ax.text(x + w / 2, y + h / 2 - 2.6, sub, ha="center", va="center", fontsize=6.9, color=MUTED)
 
@@ -164,14 +164,14 @@ def draw_pipeline(path):
     box(21, bot, w, h, "3 · Digitizer", "pen line to signals")
     box(46, bot, w, h, "4 · Signal model", "1D CNN + Transformer")
     box(71, bot, 22, h, "5 · Cross-check", "do the two agree?", fill="#fdecea", edge=RED)
-    box(21, 37.2, w, 5.2, "bad: ask for a retake", "", fill="#fff7f6", edge=RED, tc=RED)
+    box(16.5, 41, 26, 5.4, "bad photo: ask for a retake", "", fill="#fff7f6", edge=RED, tc=RED, size=7.6)
 
     arrow(15.3, 23, 20.8, top + 5)
     arrow(15.3, 20, 20.8, bot + 6)
     arrow(38.3, top + 5.5, 45.8, top + 5.5, "good / fair")
     arrow(63.3, top + 5.5, 70.8, top + 5.5)
-    arrow(30, top + h + 0.4, 30, 36.9, "", color=RED)
-    ax.text(31.2, 33.0, "bad", fontsize=6.8, color=RED, va="center")
+    arrow(29.5, top + h + 0.4, 29.5, 40.6, "", color=RED)
+    ax.text(30.7, 38.8, "bad", fontsize=6.8, color=RED, va="center")
     arrow(38.3, bot + 5.5, 45.8, bot + 5.5, "if aligned")
     arrow(63.3, bot + 5.5, 70.8, bot + 5.5)
     arrow(82, top - 0.2, 82, bot + h + 0.5, "", color=RED)
