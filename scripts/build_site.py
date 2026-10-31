@@ -6,9 +6,10 @@
 
 Reads results/*.json and samples/predictions.json (made by evaluate.py). If a file is missing it
 falls back to the numbers from the training run, so the site always builds. It also writes README.md
-from README.template.md (filling the <<TOKENS>>), so you can run it again whenever a link changes. Output: site/index.html (static, no JavaScript needed).
+from README.template.md (filling the <<TOKENS>>), so you can run it again whenever a link changes. Output: site/index.html (a static page; the in-browser demo is plain JavaScript).
 """
 import argparse
+import csv
 import html
 import json
 import shutil
@@ -142,7 +143,44 @@ def build(args):
                  '<li>Open <code>report.html</code> in a browser for the verdict, scores, heat map and rebuilt waveforms.</li>'
                  '</ol>')
 
-    tokens = {"GITHUB": args.github, "SPACE": args.space, "YOUTUBE": args.youtube, "LINKEDIN": args.linkedin,
+    browser_demo = ""
+    onnx = REPO / "weights" / "isoline_image_net.onnx"
+    if onnx.exists() and (REPO / "weights" / "calibration.json").exists():
+        model_dir = SITE / "assets" / "model"
+        model_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(onnx, model_dir / onnx.name)
+        calib = json.loads((REPO / "weights" / "calibration.json").read_text())
+        (model_dir / "calibration.json").write_text(json.dumps(
+            {"image_temperature": calib["image_temperature"], "image_thresholds": calib["image_thresholds"]}))
+        thumbs = ""
+        labels = REPO / "samples" / "labels.csv"
+        if labels.exists():
+            (SITE / "assets" / "samples").mkdir(parents=True, exist_ok=True)
+            for row in csv.DictReader(labels.open(encoding="utf-8")):
+                if not (REPO / "samples" / row["file"]).exists():
+                    continue
+                shutil.copy2(REPO / "samples" / row["file"], SITE / "assets" / "samples" / row["file"])
+                truth = row["labels"].replace("|", " + ")
+                thumbs += (f'<button type="button" class="thumb" data-src="assets/samples/{html.escape(row["file"])}" data-truth="{html.escape(truth)}">'
+                           f'<img src="assets/samples/{html.escape(row["file"])}" alt="" loading="lazy"><span>{html.escape(truth)} · {html.escape(row["kind"])}</span></button>')
+        browser_demo = ('<div id="browser-demo" class="bd" hidden><div class="bd-grid"><div>'
+                        '<div id="drop" class="drop" role="button" tabindex="0"><b>Drop an ECG picture here</b>'
+                        '<span>or click to choose a JPG or PNG. It stays on your device.</span></div>'
+                        '<input type="file" id="file" accept="image/*" hidden>'
+                        '<p class="note" style="margin:14px 0 0">Or click an example from the test split:</p>'
+                        f'<div class="thumbs">{thumbs}</div></div>'
+                        '<div id="bd-out" class="bd-out"><p class="note">Your result appears here. The model runs in your browser, nothing is uploaded.</p></div>'
+                        '</div></div>')
+        demo_lead = ("Choose or drop a picture of a 12-lead ECG and the Isoline image model runs right here in your browser. "
+                     "Nothing is uploaded to a server.")
+        usage = ('<ol class="steps">'
+                 '<li>Drop a scan or phone photo of a 12-lead ECG into the box, or click one of the example pictures.</li>'
+                 '<li>Wait a few seconds. The first run downloads the 16 MB model once and then it works offline.</li>'
+                 '<li>Read the verdict, the photo quality and the five scores. Bars in red are above the model\'s decision threshold.</li>'
+                 '<li>For the full check (waveform rebuild, cross-check, heat map) run <code>python predict.py</code> from the repository.</li>'
+                 '</ol>')
+
+    tokens = {"GITHUB": args.github, "BROWSER_DEMO": browser_demo, "SPACE": args.space, "YOUTUBE": args.youtube, "LINKEDIN": args.linkedin,
               "REPORT": args.report, "SLIDES": args.slides,
               "M_SIGNAL_AUC": f"{m['signal_auc']:.3f}", "M_LAYOUT_AUC": f"{m['layout_auc']:.3f}", "M_IMAGE_AUC": f"{m['image_auc']:.3f}",
               "M_REBUILT_AUC": f"{m['rebuilt_auc']:.3f}", "M_QUALITY": pct(m["quality_acc"]), "M_RELIABLE": pct(reliable), "M_BASE": pct(base),
