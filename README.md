@@ -9,10 +9,10 @@ It was built as a semester project for a Deep Learning course, and it is meant f
 | | |
 |---|---|
 | Website | https://isoline-ecg.vercel.app |
-| Video walkthrough |  |
+| Video walkthrough | https://youtu.be/3K9HgGK2TN4?si=OGC0UvvJCvVO5ap4 |
 | Project report | [docs/Isoline_Report.pdf](docs/Isoline_Report.pdf) |
 | Slides | [docs/Isoline_Slides.pdf](docs/Isoline_Slides.pdf) |
-| LinkedIn post |  |
+| LinkedIn post | https://lnkd.in/p/d9brwTtS |
 
 ## What it does
 
