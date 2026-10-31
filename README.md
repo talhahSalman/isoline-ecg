@@ -49,7 +49,7 @@ Plots and the per-class numbers are in [`results/`](results/). "Top-1 accuracy" 
 ## Try it
 
 ```bash
-git clone #
+git clone https://github.com/talhahSalman/isoline-ecg
 cd isoline-ecg
 pip install -r requirements.txt
 
