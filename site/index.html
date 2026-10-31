@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Isoline · Reads the ECG. Knows when not to.</title>
 <meta name="description" content="Isoline screens photos and scans of 12-lead ECGs for five cardiac patterns, checks the photo quality first, and asks for a better picture instead of guessing.">
@@ -179,8 +181,8 @@ python predict.py --image samples/ecg_01.jpg --report report.html</code></pre>
 <section id="materials"><div class="wrap">
   <h2>Report, slides and video</h2>
   <ul class="links">
-    <li><a href="assets/Isoline_Report.pdf" download="Isoline_Report.pdf"><b>Project report</b><span>Data, model and results</span></a></li>
-    <li><a href="assets/Isoline_Slides.pdf" download="Isoline_Slides.pdf"><b>Presentation</b><span>Slides used in the video</span></a></li>
+    <li><a href="assets/Isoline_Report.pdf" class="pdfview" data-name="Isoline_Report.pdf"><b>Project report</b><span>Data, model and results</span></a></li>
+    <li><a href="assets/Isoline_Slides.pdf" class="pdfview" data-name="Isoline_Slides.pdf"><b>Presentation</b><span>Slides used in the video</span></a></li>
     <li><a href="https://youtu.be/3K9HgGK2TN4?si=OGC0UvvJCvVO5ap4"><b>YouTube video</b><span>Voice-over walkthrough</span></a></li>
     <li><a href="https://github.com/talhahSalman/isoline-ecg"><b>GitHub repository</b><span>Code, weights, notebook</span></a></li>
     <li><a href="https://lnkd.in/p/d9brwTtS"><b>LinkedIn post</b><span>Project announcement</span></a></li>
@@ -404,6 +406,24 @@ python predict.py --image samples/ecg_01.jpg --report report.html</code></pre>
     if (r.ok && window.ort) { box.hidden = false; load().catch(function () {}); }
   }).catch(function () {});
 })();
+</script>
+<script>
+// Report and slides open in a viewer on this page, with a Download button.
+Array.prototype.forEach.call(document.querySelectorAll('a.pdfview'), function (a) {
+  a.addEventListener('click', function (e) {
+    if (window.innerWidth < 700) return;                 // phones: let the browser open the PDF itself
+    e.preventDefault();
+    var box = document.createElement('div'), href = a.getAttribute('href');
+    box.className = 'pdfbox';
+    box.innerHTML = '<div class="pdfbar rbtns"><a href="' + href + '" download="' + a.getAttribute('data-name') + '"><button type="button" class="main">Download PDF</button></a><button type="button" class="x">Close</button></div><iframe title="PDF" src="' + href + '"></iframe>';
+    function close() { box.remove(); document.removeEventListener('keydown', esc); }
+    function esc(k) { if (k.key === 'Escape') close(); }
+    box.querySelector('.x').onclick = close;
+    box.addEventListener('click', function (ev) { if (ev.target === box) close(); });
+    document.addEventListener('keydown', esc);
+    document.body.appendChild(box);
+  });
+});
 </script>
 </body>
 </html>
