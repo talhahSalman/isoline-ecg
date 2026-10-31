@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Isoline · Reads the ECG. Knows when not to.</title>
 <meta name="description" content="Isoline screens photos and scans of 12-lead ECGs for five cardiac patterns, checks the photo quality first, and asks for a better picture instead of guessing.">
@@ -65,6 +66,10 @@ ul.links{list-style:none;padding:0;display:grid;grid-template-columns:repeat(aut
 ul.links li a{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;text-decoration:none}
 ul.links li a:hover{border-color:var(--red)}ul.links b{display:block}ul.links span{color:var(--muted);font-size:14px}
 footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);font-size:14px}
+.rbtns{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 4px}.rbtns button{font:600 14px/1 inherit;padding:10px 16px;border-radius:9px;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--text)}
+.rbtns button.main{background:var(--red);border-color:var(--red);color:#fff}.rbtns button:hover{border-color:var(--red)}
+.pdfbox{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:50;display:flex;flex-direction:column;padding:16px}
+.pdfbar{display:flex;gap:10px;justify-content:flex-end;max-width:900px;width:100%;margin:0 auto 10px}.pdfbox iframe{flex:1;width:100%;max-width:900px;margin:0 auto;border:0;border-radius:8px;background:#fff}
 </style>
 </head>
 <body>
@@ -104,17 +109,17 @@ footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);f
   </div>
   <h3 style="margin-top:34px">Real outputs on test pictures</h3>
   <p class="note">These pictures were drawn at random from the test split (not hand-picked), and the results below are what the model returned, including its mistakes. Click a picture's report link to see the full one-page report.</p>
-  <div class="gallery"><figure><img src="assets/samples/ecg_01.jpg" alt="ECG example, clean print" loading="lazy"><figcaption><span class="badge b-flagged">flagged</span>clean print<br>Recorded: <b>NORM</b> · top pick <b>NORM</b> ✓ matches<br><span class="note">The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model&#x27;s best guess is: normal ECG.</span> · <a href="assets/reports/ecg_01.html">full report</a></figcaption></figure>
-<figure><img src="assets/samples/ecg_02.jpg" alt="ECG example, clean print" loading="lazy"><figcaption><span class="badge b-flagged">flagged</span>clean print<br>Recorded: <b>MI</b> · top pick <b>MI</b> ✓ matches<br><span class="note">The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model&#x27;s best guess is: myocardial infarction pattern.</span> · <a href="assets/reports/ecg_02.html">full report</a></figcaption></figure>
-<figure><img src="assets/samples/ecg_03.jpg" alt="ECG example, clean print" loading="lazy"><figcaption><span class="badge b-flagged">flagged</span>clean print<br>Recorded: <b>STTC</b> · top pick <b>NORM</b> ✗ does not match<br><span class="note">The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model&#x27;s best guess is: normal ECG.</span> · <a href="assets/reports/ecg_03.html">full report</a></figcaption></figure>
-<figure><img src="assets/samples/ecg_04.jpg" alt="ECG example, clean print" loading="lazy"><figcaption><span class="badge b-reliable">reliable</span>clean print<br>Recorded: <b>CD</b> · top pick <b>CD</b> ✓ matches<br><span class="note">Both checks agree. The most likely finding is: conduction disturbance.</span> · <a href="assets/reports/ecg_04.html">full report</a></figcaption></figure>
-<figure><img src="assets/samples/ecg_05.jpg" alt="ECG example, clean print" loading="lazy"><figcaption><span class="badge b-flagged">flagged</span>clean print<br>Recorded: <b>HYP</b> · top pick <b>HYP</b> ✓ matches<br><span class="note">The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model&#x27;s best guess is: hypertrophy pattern.</span> · <a href="assets/reports/ecg_05.html">full report</a></figcaption></figure>
-<figure><img src="assets/samples/ecg_06.jpg" alt="ECG example, good photo" loading="lazy"><figcaption><span class="badge b-image-only">image-only</span>good photo<br>Recorded: <b>NORM</b> · top pick <b>NORM</b> ✓ matches<br><span class="note">Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: normal ECG.</span> · <a href="assets/reports/ecg_06.html">full report</a></figcaption></figure>
-<figure><img src="assets/samples/ecg_07.jpg" alt="ECG example, good photo" loading="lazy"><figcaption><span class="badge b-image-only">image-only</span>good photo<br>Recorded: <b>STTC</b> · top pick <b>STTC</b> ✓ matches<br><span class="note">Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: ST/T-wave change.</span> · <a href="assets/reports/ecg_07.html">full report</a></figcaption></figure>
-<figure><img src="assets/samples/ecg_08.jpg" alt="ECG example, fair photo" loading="lazy"><figcaption><span class="badge b-image-only">image-only</span>fair photo<br>Recorded: <b>MI + CD</b> · top pick <b>CD</b> ✓ matches<br><span class="note">Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: conduction disturbance.</span> · <a href="assets/reports/ecg_08.html">full report</a></figcaption></figure>
-<figure><img src="assets/samples/ecg_09.jpg" alt="ECG example, fair photo" loading="lazy"><figcaption><span class="badge b-image-only">image-only</span>fair photo<br>Recorded: <b>NORM</b> · top pick <b>NORM</b> ✓ matches<br><span class="note">Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: normal ECG.</span> · <a href="assets/reports/ecg_09.html">full report</a></figcaption></figure>
-<figure><img src="assets/samples/ecg_10.jpg" alt="ECG example, bad photo" loading="lazy"><figcaption><span class="badge b-rejected">rejected</span>bad photo<br>Recorded: <b>NORM</b> · asked for a better photo<br><span class="note">This image is not clear enough to read safely. Please retake it. Lay the page flat, use even light without shadows, keep the whole printout in the frame, and hold the camera steady.</span> · <a href="assets/reports/ecg_10.html">full report</a></figcaption></figure>
-<figure><img src="assets/samples/ecg_11.jpg" alt="ECG example, bad photo" loading="lazy"><figcaption><span class="badge b-rejected">rejected</span>bad photo<br>Recorded: <b>STTC</b> · asked for a better photo<br><span class="note">This image is not clear enough to read safely. Please retake it. Lay the page flat, use even light without shadows, keep the whole printout in the frame, and hold the camera steady.</span> · <a href="assets/reports/ecg_11.html">full report</a></figcaption></figure></div>
+  <div class="gallery"><figure><img src="assets/samples/ecg_01.jpg" alt="ECG example, clean print" loading="lazy"><figcaption><span class="badge b-flagged">flagged</span>clean print<br>Recorded: <b>NORM</b> · top pick <b>NORM</b> ✓ matches<br><span class="note">The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model&#x27;s best guess is: normal ECG.</span> · <a class="rep" href="assets/reports/ecg_01.html" data-r="{&quot;truth&quot;: &quot;NORM&quot;, &quot;kind&quot;: &quot;clean print&quot;, &quot;message&quot;: &quot;The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model&#x27;s best guess is: normal ECG.&quot;, &quot;outcome&quot;: 1, &quot;probs&quot;: [0.9299365282058716, 0.016549723222851753, 0.06359823793172836, 0.03858670964837074, 0.021767348051071167], &quot;quality&quot;: [0.9999970197677612, 2.652396460689488e-06, 3.5424932320893276e-07]}">full report</a></figcaption></figure>
+<figure><img src="assets/samples/ecg_02.jpg" alt="ECG example, clean print" loading="lazy"><figcaption><span class="badge b-flagged">flagged</span>clean print<br>Recorded: <b>MI</b> · top pick <b>MI</b> ✓ matches<br><span class="note">The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model&#x27;s best guess is: myocardial infarction pattern.</span> · <a class="rep" href="assets/reports/ecg_02.html" data-r="{&quot;truth&quot;: &quot;MI&quot;, &quot;kind&quot;: &quot;clean print&quot;, &quot;message&quot;: &quot;The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model&#x27;s best guess is: myocardial infarction pattern.&quot;, &quot;outcome&quot;: 1, &quot;probs&quot;: [0.2179591953754425, 0.6816467642784119, 0.16394756734371185, 0.1382448673248291, 0.09954513609409332], &quot;quality&quot;: [0.9999947547912598, 2.711951538003632e-06, 2.4521152681700187e-06]}">full report</a></figcaption></figure>
+<figure><img src="assets/samples/ecg_03.jpg" alt="ECG example, clean print" loading="lazy"><figcaption><span class="badge b-flagged">flagged</span>clean print<br>Recorded: <b>STTC</b> · top pick <b>NORM</b> ✗ does not match<br><span class="note">The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model&#x27;s best guess is: normal ECG.</span> · <a class="rep" href="assets/reports/ecg_03.html" data-r="{&quot;truth&quot;: &quot;STTC&quot;, &quot;kind&quot;: &quot;clean print&quot;, &quot;message&quot;: &quot;The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model&#x27;s best guess is: normal ECG.&quot;, &quot;outcome&quot;: 1, &quot;probs&quot;: [0.9680821299552917, 0.007882137782871723, 0.042412374168634415, 0.006655280478298664, 0.004889452829957008], &quot;quality&quot;: [0.9999988079071045, 1.1347819963702932e-06, 2.879222726903663e-08]}">full report</a></figcaption></figure>
+<figure><img src="assets/samples/ecg_04.jpg" alt="ECG example, clean print" loading="lazy"><figcaption><span class="badge b-reliable">reliable</span>clean print<br>Recorded: <b>CD</b> · top pick <b>CD</b> ✓ matches<br><span class="note">Both checks agree. The most likely finding is: conduction disturbance.</span> · <a class="rep" href="assets/reports/ecg_04.html" data-r="{&quot;truth&quot;: &quot;CD&quot;, &quot;kind&quot;: &quot;clean print&quot;, &quot;message&quot;: &quot;Both checks agree. The most likely finding is: conduction disturbance.&quot;, &quot;outcome&quot;: 0, &quot;probs&quot;: [0.012967986986041069, 0.09984549880027771, 0.02147781476378441, 0.992608368396759, 0.13275380432605743], &quot;quality&quot;: [0.9999955892562866, 2.9592285955004627e-06, 1.4090646800468676e-06]}">full report</a></figcaption></figure>
+<figure><img src="assets/samples/ecg_05.jpg" alt="ECG example, clean print" loading="lazy"><figcaption><span class="badge b-flagged">flagged</span>clean print<br>Recorded: <b>HYP</b> · top pick <b>HYP</b> ✓ matches<br><span class="note">The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model&#x27;s best guess is: hypertrophy pattern.</span> · <a class="rep" href="assets/reports/ecg_05.html" data-r="{&quot;truth&quot;: &quot;HYP&quot;, &quot;kind&quot;: &quot;clean print&quot;, &quot;message&quot;: &quot;The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model&#x27;s best guess is: hypertrophy pattern.&quot;, &quot;outcome&quot;: 1, &quot;probs&quot;: [0.06724914908409119, 0.03285706043243408, 0.5702114105224609, 0.039577919989824295, 0.924953043460846], &quot;quality&quot;: [0.9999959468841553, 3.4962415611516917e-06, 6.15202907283674e-07]}">full report</a></figcaption></figure>
+<figure><img src="assets/samples/ecg_06.jpg" alt="ECG example, good photo" loading="lazy"><figcaption><span class="badge b-image-only">image-only</span>good photo<br>Recorded: <b>NORM</b> · top pick <b>NORM</b> ✓ matches<br><span class="note">Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: normal ECG.</span> · <a class="rep" href="assets/reports/ecg_06.html" data-r="{&quot;truth&quot;: &quot;NORM&quot;, &quot;kind&quot;: &quot;good photo&quot;, &quot;message&quot;: &quot;Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: normal ECG.&quot;, &quot;outcome&quot;: 2, &quot;probs&quot;: [0.9648915529251099, 0.023103976622223854, 0.004842104855924845, 0.026716355234384537, 0.008439755067229271], &quot;quality&quot;: [1.0, 2.920362840441726e-09, 9.078321983047033e-10]}">full report</a></figcaption></figure>
+<figure><img src="assets/samples/ecg_07.jpg" alt="ECG example, good photo" loading="lazy"><figcaption><span class="badge b-image-only">image-only</span>good photo<br>Recorded: <b>STTC</b> · top pick <b>STTC</b> ✓ matches<br><span class="note">Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: ST/T-wave change.</span> · <a class="rep" href="assets/reports/ecg_07.html" data-r="{&quot;truth&quot;: &quot;STTC&quot;, &quot;kind&quot;: &quot;good photo&quot;, &quot;message&quot;: &quot;Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: ST/T-wave change.&quot;, &quot;outcome&quot;: 2, &quot;probs&quot;: [0.1977299153804779, 0.08564876019954681, 0.7065773010253906, 0.14105461537837982, 0.061958178877830505], &quot;quality&quot;: [0.9999935626983643, 5.450837761600269e-06, 9.805835361476056e-07]}">full report</a></figcaption></figure>
+<figure><img src="assets/samples/ecg_08.jpg" alt="ECG example, fair photo" loading="lazy"><figcaption><span class="badge b-image-only">image-only</span>fair photo<br>Recorded: <b>MI + CD</b> · top pick <b>CD</b> ✓ matches<br><span class="note">Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: conduction disturbance.</span> · <a class="rep" href="assets/reports/ecg_08.html" data-r="{&quot;truth&quot;: &quot;MI + CD&quot;, &quot;kind&quot;: &quot;fair photo&quot;, &quot;message&quot;: &quot;Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: conduction disturbance.&quot;, &quot;outcome&quot;: 2, &quot;probs&quot;: [0.018393293023109436, 0.18068824708461761, 0.22637531161308289, 0.9692721962928772, 0.016591154038906097], &quot;quality&quot;: [2.8136435403780524e-09, 1.0, 2.059871440085459e-10]}">full report</a></figcaption></figure>
+<figure><img src="assets/samples/ecg_09.jpg" alt="ECG example, fair photo" loading="lazy"><figcaption><span class="badge b-image-only">image-only</span>fair photo<br>Recorded: <b>NORM</b> · top pick <b>NORM</b> ✓ matches<br><span class="note">Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: normal ECG.</span> · <a class="rep" href="assets/reports/ecg_09.html" data-r="{&quot;truth&quot;: &quot;NORM&quot;, &quot;kind&quot;: &quot;fair photo&quot;, &quot;message&quot;: &quot;Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: normal ECG.&quot;, &quot;outcome&quot;: 2, &quot;probs&quot;: [0.9759331345558167, 0.006851709447801113, 0.014933464117348194, 0.01788170263171196, 0.005205156281590462], &quot;quality&quot;: [3.0721192700866595e-08, 1.0, 7.988687489302038e-10]}">full report</a></figcaption></figure>
+<figure><img src="assets/samples/ecg_10.jpg" alt="ECG example, bad photo" loading="lazy"><figcaption><span class="badge b-rejected">rejected</span>bad photo<br>Recorded: <b>NORM</b> · asked for a better photo<br><span class="note">This image is not clear enough to read safely. Please retake it. Lay the page flat, use even light without shadows, keep the whole printout in the frame, and hold the camera steady.</span> · <a class="rep" href="assets/reports/ecg_10.html" data-r="{&quot;truth&quot;: &quot;NORM&quot;, &quot;kind&quot;: &quot;bad photo&quot;, &quot;message&quot;: &quot;This image is not clear enough to read safely. Please retake it. Lay the page flat, use even light without shadows, keep the whole printout in the frame, and hold the camera steady.&quot;, &quot;outcome&quot;: 3, &quot;probs&quot;: [0.8982993960380554, 0.09709929674863815, 0.020824404433369637, 0.023571854457259178, 0.007896260358393192], &quot;quality&quot;: [2.6025119836958766e-07, 4.756815997097874e-06, 0.9999949932098389]}">full report</a></figcaption></figure>
+<figure><img src="assets/samples/ecg_11.jpg" alt="ECG example, bad photo" loading="lazy"><figcaption><span class="badge b-rejected">rejected</span>bad photo<br>Recorded: <b>STTC</b> · asked for a better photo<br><span class="note">This image is not clear enough to read safely. Please retake it. Lay the page flat, use even light without shadows, keep the whole printout in the frame, and hold the camera steady.</span> · <a class="rep" href="assets/reports/ecg_11.html" data-r="{&quot;truth&quot;: &quot;STTC&quot;, &quot;kind&quot;: &quot;bad photo&quot;, &quot;message&quot;: &quot;This image is not clear enough to read safely. Please retake it. Lay the page flat, use even light without shadows, keep the whole printout in the frame, and hold the camera steady.&quot;, &quot;outcome&quot;: 3, &quot;probs&quot;: [0.08683619648218155, 0.04626263678073883, 0.8517332077026367, 0.047882188111543655, 0.039572302252054214], &quot;quality&quot;: [5.0383077905280516e-06, 2.8041269615641795e-05, 0.9999668598175049]}">full report</a></figcaption></figure></div>
   <p class="note" style="margin-top:18px">Isoline works best on pictures like these examples. It was trained on rendered ECGs, not real clinic photos, and it is a learning project, not a medical device.</p>
 </div></section>
 
@@ -193,8 +198,9 @@ python predict.py --image samples/ecg_01.jpg --report report.html</code></pre>
   </ul>
 </div></section>
 
-<footer><div class="wrap">Designed and Developed by Talha Salman</div></footer>
+<footer><div class="wrap">&copy; 2026 Isoline &middot; Designed and Developed by Talha Salman</div></footer>
 <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/ort.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 (function () {
   var box = document.getElementById('browser-demo');
@@ -211,7 +217,7 @@ python predict.py --image samples/ecg_01.jpg --report report.html</code></pre>
   };
   var RETAKE = 'Lay the page flat, use even light without shadows, keep the whole printout in the frame, and hold the camera steady.';
   var MEAN = [0.485, 0.456, 0.406], STD = [0.229, 0.224, 0.225];
-  var session = null, calib = null, loading = null;
+  var session = null, calib = null, loading = null, last = null;
   var out = document.getElementById('bd-out');
 
   // Same picture preparation as the Python code: portrait -> landscape, resize to 800x400, then to 384x192 (area averaging).
@@ -298,19 +304,76 @@ python predict.py --image samples/ecg_01.jpg --report report.html</code></pre>
     }
     if (truth) html += '<p class="note">Known label for this test picture: <b>' + esc(truth) + '</b></p>';
     html += '<p class="note">Browser mode runs the image check only (quality gate and five scores). The waveform rebuild, the cross-check and the heat map need the full version: <code>python predict.py</code>. Isoline is a learning project, not a medical device.</p>';
+    if (window.jspdf) html += '<div class="rbtns"><button type="button" class="main" id="bd-view">View report (PDF)</button><button type="button" id="bd-dl">Download PDF</button></div>';
     out.innerHTML = html;
+    last = {r: r, truth: truth, qi: qi, ti: ti};
+    if (window.jspdf) {
+      document.getElementById('bd-view').onclick = function () { viewPdf(); };
+      document.getElementById('bd-dl').onclick = function () { savePdf(); };
+    }
   }
   async function handle(blob, truth) {
     var url = URL.createObjectURL(blob);
     out.innerHTML = '<p class="busy">Reading the picture' + (session ? '' : ' (the first run also downloads the 16 MB model once)') + ' ...</p>';
     try {
       var bitmap = await createImageBitmap(blob, {imageOrientation: 'from-image'});
-      render(await analyse(bitmap), url, truth);
+      var res = await analyse(bitmap);
+      var pc = document.createElement('canvas'), sc = Math.min(1, 1400 / Math.max(bitmap.width, bitmap.height));
+      pc.width = Math.round(bitmap.width * sc); pc.height = Math.round(bitmap.height * sc);
+      var px = pc.getContext('2d'); px.fillStyle = '#fff'; px.fillRect(0, 0, pc.width, pc.height); px.drawImage(bitmap, 0, 0, pc.width, pc.height);
+      res.picture = pc.toDataURL('image/jpeg', 0.88); res.pw = pc.width; res.ph = pc.height;
+      render(res, url, truth);
     } catch (e) {
       out.innerHTML = '<p>Sorry, this picture could not be read in the browser (' + esc(e && e.message ? e.message : e) + '). Try a JPG or PNG, or use the examples.</p>';
     }
   }
-  window.__isoline = {preprocess: preprocess, analyse: analyse};
+  function buildPdf() {
+    var J = window.jspdf.jsPDF, d = new J({unit: 'mm', format: 'a4'}), r = last.r, qi = last.qi, top = CLASSES[last.ti], y = 20, L = 18, W = 174;
+    var ink = [33, 37, 41], grey = [108, 117, 125], red = [192, 57, 43];
+    function txt(s, size, style, col, gap) { d.setFont('helvetica', style || 'normal'); d.setFontSize(size); d.setTextColor.apply(d, col || ink);
+      var lines = d.splitTextToSize(s, W); d.text(lines, L, y); y += lines.length * size * 0.42 + (gap || 2); }
+    d.setFillColor(192, 57, 43); d.rect(0, 0, 210, 4, 'F');
+    d.setFont('helvetica', 'bold'); d.setFontSize(20); d.setTextColor.apply(d, ink); d.text('Isoline', L, y + 2);
+    d.setFont('helvetica', 'normal'); d.setFontSize(10); d.setTextColor.apply(d, grey);
+    d.text('ECG screening report', 192, y - 2, {align: 'right'}); d.text(new Date().toLocaleString(), 192, y + 3, {align: 'right'});
+    y += 8; txt('Reads the ECG. Knows when not to.', 10, 'italic', grey, 4);
+    d.setDrawColor(222, 226, 230); d.line(L, y, 192, y); y += 7;
+    var ih = Math.min(80, W * r.ph / r.pw), iw = ih * r.pw / r.ph;
+    d.addImage(r.picture, 'JPEG', L + (W - iw) / 2, y, iw, ih); d.setDrawColor(206, 212, 218); d.rect(L + (W - iw) / 2, y, iw, ih); y += ih + 9;
+    if (qi === 2) { txt('Result: please retake the photo', 15, 'bold', red, 3); txt('This image is not clear enough to read safely. ' + RETAKE, 11, 'normal', ink, 5); }
+    else { txt('Result: ' + NAMES[top], 15, 'bold', ink, 3); txt(last.note || 'Image check only. The waveform cross-check runs in the full version (python predict.py).', 10, 'normal', grey, 5); }
+    txt('Photo quality: ' + QUALITY[qi] + '   (good ' + Math.round(r.quality[0] * 100) + '%, fair ' + Math.round(r.quality[1] * 100) + '%, bad ' + Math.round(r.quality[2] * 100) + '%)', 11, 'normal', ink, 6);
+    if (qi !== 2) {
+      txt('Scores from the image model', 12, 'bold', ink, 3);
+      CLASSES.forEach(function (c, i) {
+        var p = r.probs[i], hit = p >= calib.image_thresholds[c];
+        d.setFont('helvetica', hit ? 'bold' : 'normal'); d.setFontSize(10); d.setTextColor.apply(d, hit ? red : ink);
+        d.text(c, L, y + 3.2); d.setTextColor.apply(d, grey); d.text(NAMES[c], L + 16, y + 3.2);
+        d.setFillColor(233, 236, 239); d.rect(L + 76, y, 80, 4, 'F');
+        if (hit) d.setFillColor(192, 57, 43); else d.setFillColor(134, 142, 150); d.rect(L + 76, y, 80 * p, 4, 'F');
+        d.setTextColor.apply(d, ink); d.text(Math.round(p * 100) + '%', 192, y + 3.2, {align: 'right'}); y += 7.5;
+      });
+      y += 1; txt('Red rows are above the decision threshold for that class.', 9, 'italic', grey, 5);
+      txt('What to do next', 12, 'bold', ink, 3); txt(ADVICE[top], 11, 'normal', ink, 5);
+    }
+    if (last.truth) txt('Known label for this test picture: ' + last.truth, 10, 'normal', grey, 5);
+    d.setDrawColor(222, 226, 230); d.line(L, 272, 192, 272);
+    d.setFont('helvetica', 'normal'); d.setFontSize(8.5); d.setTextColor.apply(d, grey);
+    d.text(d.splitTextToSize('Isoline is a learning project and a screening aid. It is not a medical device and does not give a diagnosis. Always ask a clinician.', W), L, 277);
+    d.text('© 2026 Isoline · Designed and Developed by Talha Salman', L, 287); d.text(location.host || 'isoline', 192, 287, {align: 'right'});
+    return d;
+  }
+  function savePdf() { buildPdf().save('Isoline_ECG_report.pdf'); }
+  function viewPdf() {
+    var url = URL.createObjectURL(buildPdf().output('blob')), box = document.createElement('div');
+    box.className = 'pdfbox';
+    box.innerHTML = '<div class="pdfbar rbtns"><button type="button" class="main">Download PDF</button><button type="button">Close</button></div><iframe title="Isoline report" src="' + url + '"></iframe>';
+    var b = box.querySelectorAll('button');
+    b[0].onclick = savePdf; b[1].onclick = function () { box.remove(); URL.revokeObjectURL(url); };
+    box.addEventListener('click', function (e) { if (e.target === box) b[1].onclick(); });
+    document.body.appendChild(box);
+  }
+  window.__isoline = {preprocess: preprocess, analyse: analyse, buildPdf: function () { return buildPdf(); }};
 
   var drop = document.getElementById('drop'), file = document.getElementById('file');
   drop.addEventListener('click', function () { file.click(); });
@@ -322,6 +385,18 @@ python predict.py --image samples/ecg_01.jpg --report report.html</code></pre>
   Array.prototype.forEach.call(document.querySelectorAll('.thumb'), function (b) {
     b.addEventListener('click', function () {
       fetch(b.getAttribute('data-src')).then(function (r) { return r.blob(); }).then(function (blob) { handle(blob, b.getAttribute('data-truth')); });
+    });
+  });
+  // "full report" links in the gallery open an A4 PDF in the same page viewer.
+  Array.prototype.forEach.call(document.querySelectorAll('a.rep'), function (a) {
+    a.addEventListener('click', function (e) {
+      if (!window.jspdf || !calib) return;               // fall back to the HTML report
+      e.preventDefault();
+      var g = JSON.parse(a.getAttribute('data-r')), img = a.closest('figure').querySelector('img'), c = document.createElement('canvas');
+      c.width = img.naturalWidth; c.height = img.naturalHeight; c.getContext('2d').drawImage(img, 0, 0);
+      var r = {probs: g.probs, quality: g.quality, picture: c.toDataURL('image/jpeg', 0.9), pw: c.width, ph: c.height};
+      last = {r: r, truth: g.truth + ' (' + g.kind + ')', qi: g.outcome === 3 ? 2 : argmax(g.quality), ti: argmax(g.probs), note: g.message};
+      viewPdf();
     });
   });
   // Show the box only if the model file is really there; start downloading it in the background.

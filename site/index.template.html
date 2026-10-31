@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Isoline · Reads the ECG. Knows when not to.</title>
 <meta name="description" content="Isoline screens photos and scans of 12-lead ECGs for five cardiac patterns, checks the photo quality first, and asks for a better picture instead of guessing.">
@@ -65,6 +66,10 @@ ul.links{list-style:none;padding:0;display:grid;grid-template-columns:repeat(aut
 ul.links li a{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;text-decoration:none}
 ul.links li a:hover{border-color:var(--red)}ul.links b{display:block}ul.links span{color:var(--muted);font-size:14px}
 footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);font-size:14px}
+.rbtns{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 4px}.rbtns button{font:600 14px/1 inherit;padding:10px 16px;border-radius:9px;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--text)}
+.rbtns button.main{background:var(--red);border-color:var(--red);color:#fff}.rbtns button:hover{border-color:var(--red)}
+.pdfbox{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:50;display:flex;flex-direction:column;padding:16px}
+.pdfbar{display:flex;gap:10px;justify-content:flex-end;max-width:900px;width:100%;margin:0 auto 10px}.pdfbox iframe{flex:1;width:100%;max-width:900px;margin:0 auto;border:0;border-radius:8px;background:#fff}
 </style>
 </head>
 <body>
@@ -172,8 +177,9 @@ python predict.py --image samples/ecg_01.jpg --report report.html</code></pre>
   </ul>
 </div></section>
 
-<footer><div class="wrap">Designed and Developed by Talha Salman</div></footer>
+<footer><div class="wrap">&copy; 2026 Isoline &middot; Designed and Developed by Talha Salman</div></footer>
 <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/ort.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 (function () {
   var box = document.getElementById('browser-demo');
@@ -190,7 +196,7 @@ python predict.py --image samples/ecg_01.jpg --report report.html</code></pre>
   };
   var RETAKE = 'Lay the page flat, use even light without shadows, keep the whole printout in the frame, and hold the camera steady.';
   var MEAN = [0.485, 0.456, 0.406], STD = [0.229, 0.224, 0.225];
-  var session = null, calib = null, loading = null;
+  var session = null, calib = null, loading = null, last = null;
   var out = document.getElementById('bd-out');
 
   // Same picture preparation as the Python code: portrait -> landscape, resize to 800x400, then to 384x192 (area averaging).
@@ -277,19 +283,76 @@ python predict.py --image samples/ecg_01.jpg --report report.html</code></pre>
     }
     if (truth) html += '<p class="note">Known label for this test picture: <b>' + esc(truth) + '</b></p>';
     html += '<p class="note">Browser mode runs the image check only (quality gate and five scores). The waveform rebuild, the cross-check and the heat map need the full version: <code>python predict.py</code>. Isoline is a learning project, not a medical device.</p>';
+    if (window.jspdf) html += '<div class="rbtns"><button type="button" class="main" id="bd-view">View report (PDF)</button><button type="button" id="bd-dl">Download PDF</button></div>';
     out.innerHTML = html;
+    last = {r: r, truth: truth, qi: qi, ti: ti};
+    if (window.jspdf) {
+      document.getElementById('bd-view').onclick = function () { viewPdf(); };
+      document.getElementById('bd-dl').onclick = function () { savePdf(); };
+    }
   }
   async function handle(blob, truth) {
     var url = URL.createObjectURL(blob);
     out.innerHTML = '<p class="busy">Reading the picture' + (session ? '' : ' (the first run also downloads the 16 MB model once)') + ' ...</p>';
     try {
       var bitmap = await createImageBitmap(blob, {imageOrientation: 'from-image'});
-      render(await analyse(bitmap), url, truth);
+      var res = await analyse(bitmap);
+      var pc = document.createElement('canvas'), sc = Math.min(1, 1400 / Math.max(bitmap.width, bitmap.height));
+      pc.width = Math.round(bitmap.width * sc); pc.height = Math.round(bitmap.height * sc);
+      var px = pc.getContext('2d'); px.fillStyle = '#fff'; px.fillRect(0, 0, pc.width, pc.height); px.drawImage(bitmap, 0, 0, pc.width, pc.height);
+      res.picture = pc.toDataURL('image/jpeg', 0.88); res.pw = pc.width; res.ph = pc.height;
+      render(res, url, truth);
     } catch (e) {
       out.innerHTML = '<p>Sorry, this picture could not be read in the browser (' + esc(e && e.message ? e.message : e) + '). Try a JPG or PNG, or use the examples.</p>';
     }
   }
-  window.__isoline = {preprocess: preprocess, analyse: analyse};
+  function buildPdf() {
+    var J = window.jspdf.jsPDF, d = new J({unit: 'mm', format: 'a4'}), r = last.r, qi = last.qi, top = CLASSES[last.ti], y = 20, L = 18, W = 174;
+    var ink = [33, 37, 41], grey = [108, 117, 125], red = [192, 57, 43];
+    function txt(s, size, style, col, gap) { d.setFont('helvetica', style || 'normal'); d.setFontSize(size); d.setTextColor.apply(d, col || ink);
+      var lines = d.splitTextToSize(s, W); d.text(lines, L, y); y += lines.length * size * 0.42 + (gap || 2); }
+    d.setFillColor(192, 57, 43); d.rect(0, 0, 210, 4, 'F');
+    d.setFont('helvetica', 'bold'); d.setFontSize(20); d.setTextColor.apply(d, ink); d.text('Isoline', L, y + 2);
+    d.setFont('helvetica', 'normal'); d.setFontSize(10); d.setTextColor.apply(d, grey);
+    d.text('ECG screening report', 192, y - 2, {align: 'right'}); d.text(new Date().toLocaleString(), 192, y + 3, {align: 'right'});
+    y += 8; txt('Reads the ECG. Knows when not to.', 10, 'italic', grey, 4);
+    d.setDrawColor(222, 226, 230); d.line(L, y, 192, y); y += 7;
+    var ih = Math.min(80, W * r.ph / r.pw), iw = ih * r.pw / r.ph;
+    d.addImage(r.picture, 'JPEG', L + (W - iw) / 2, y, iw, ih); d.setDrawColor(206, 212, 218); d.rect(L + (W - iw) / 2, y, iw, ih); y += ih + 9;
+    if (qi === 2) { txt('Result: please retake the photo', 15, 'bold', red, 3); txt('This image is not clear enough to read safely. ' + RETAKE, 11, 'normal', ink, 5); }
+    else { txt('Result: ' + NAMES[top], 15, 'bold', ink, 3); txt(last.note || 'Image check only. The waveform cross-check runs in the full version (python predict.py).', 10, 'normal', grey, 5); }
+    txt('Photo quality: ' + QUALITY[qi] + '   (good ' + Math.round(r.quality[0] * 100) + '%, fair ' + Math.round(r.quality[1] * 100) + '%, bad ' + Math.round(r.quality[2] * 100) + '%)', 11, 'normal', ink, 6);
+    if (qi !== 2) {
+      txt('Scores from the image model', 12, 'bold', ink, 3);
+      CLASSES.forEach(function (c, i) {
+        var p = r.probs[i], hit = p >= calib.image_thresholds[c];
+        d.setFont('helvetica', hit ? 'bold' : 'normal'); d.setFontSize(10); d.setTextColor.apply(d, hit ? red : ink);
+        d.text(c, L, y + 3.2); d.setTextColor.apply(d, grey); d.text(NAMES[c], L + 16, y + 3.2);
+        d.setFillColor(233, 236, 239); d.rect(L + 76, y, 80, 4, 'F');
+        if (hit) d.setFillColor(192, 57, 43); else d.setFillColor(134, 142, 150); d.rect(L + 76, y, 80 * p, 4, 'F');
+        d.setTextColor.apply(d, ink); d.text(Math.round(p * 100) + '%', 192, y + 3.2, {align: 'right'}); y += 7.5;
+      });
+      y += 1; txt('Red rows are above the decision threshold for that class.', 9, 'italic', grey, 5);
+      txt('What to do next', 12, 'bold', ink, 3); txt(ADVICE[top], 11, 'normal', ink, 5);
+    }
+    if (last.truth) txt('Known label for this test picture: ' + last.truth, 10, 'normal', grey, 5);
+    d.setDrawColor(222, 226, 230); d.line(L, 272, 192, 272);
+    d.setFont('helvetica', 'normal'); d.setFontSize(8.5); d.setTextColor.apply(d, grey);
+    d.text(d.splitTextToSize('Isoline is a learning project and a screening aid. It is not a medical device and does not give a diagnosis. Always ask a clinician.', W), L, 277);
+    d.text('© 2026 Isoline · Designed and Developed by Talha Salman', L, 287); d.text(location.host || 'isoline', 192, 287, {align: 'right'});
+    return d;
+  }
+  function savePdf() { buildPdf().save('Isoline_ECG_report.pdf'); }
+  function viewPdf() {
+    var url = URL.createObjectURL(buildPdf().output('blob')), box = document.createElement('div');
+    box.className = 'pdfbox';
+    box.innerHTML = '<div class="pdfbar rbtns"><button type="button" class="main">Download PDF</button><button type="button">Close</button></div><iframe title="Isoline report" src="' + url + '"></iframe>';
+    var b = box.querySelectorAll('button');
+    b[0].onclick = savePdf; b[1].onclick = function () { box.remove(); URL.revokeObjectURL(url); };
+    box.addEventListener('click', function (e) { if (e.target === box) b[1].onclick(); });
+    document.body.appendChild(box);
+  }
+  window.__isoline = {preprocess: preprocess, analyse: analyse, buildPdf: function () { return buildPdf(); }};
 
   var drop = document.getElementById('drop'), file = document.getElementById('file');
   drop.addEventListener('click', function () { file.click(); });
@@ -301,6 +364,18 @@ python predict.py --image samples/ecg_01.jpg --report report.html</code></pre>
   Array.prototype.forEach.call(document.querySelectorAll('.thumb'), function (b) {
     b.addEventListener('click', function () {
       fetch(b.getAttribute('data-src')).then(function (r) { return r.blob(); }).then(function (blob) { handle(blob, b.getAttribute('data-truth')); });
+    });
+  });
+  // "full report" links in the gallery open an A4 PDF in the same page viewer.
+  Array.prototype.forEach.call(document.querySelectorAll('a.rep'), function (a) {
+    a.addEventListener('click', function (e) {
+      if (!window.jspdf || !calib) return;               // fall back to the HTML report
+      e.preventDefault();
+      var g = JSON.parse(a.getAttribute('data-r')), img = a.closest('figure').querySelector('img'), c = document.createElement('canvas');
+      c.width = img.naturalWidth; c.height = img.naturalHeight; c.getContext('2d').drawImage(img, 0, 0);
+      var r = {probs: g.probs, quality: g.quality, picture: c.toDataURL('image/jpeg', 0.9), pw: c.width, ph: c.height};
+      last = {r: r, truth: g.truth + ' (' + g.kind + ')', qi: g.outcome === 3 ? 2 : argmax(g.quality), ti: argmax(g.probs), note: g.message};
+      viewPdf();
     });
   });
   // Show the box only if the model file is really there; start downloading it in the background.

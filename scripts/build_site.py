@@ -97,7 +97,10 @@ def example_cards(link_reports: bool) -> str:
             verdict = "asked for a better photo"
         else:
             verdict = f"top pick <b>{p['top']}</b> " + ("✓ matches" if p["correct"] else "✗ does not match")
-        link = f' · <a href="assets/reports/{report.name}">full report</a>' if report.exists() and link_reports else ""
+        pdf_data = {"truth": truth, "kind": p["kind"], "message": p["message"], "outcome": p["outcome"],
+                    "probs": [p.get("image_probs", {}).get(c, 0) for c in CLASSES], "quality": [p.get("quality_probs", {}).get(q, 0) for q in ("good", "fair", "bad")]}
+        link = (f' · <a class="rep" href="assets/reports/{report.name}" data-r="{html.escape(json.dumps(pdf_data))}">full report</a>'
+                if report.exists() and link_reports else "")
         cards.append(
             f'<figure><img src="assets/samples/{html.escape(p["file"])}" alt="ECG example, {html.escape(p["kind"])}" loading="lazy">'
             f'<figcaption><span class="badge b-{p["outcome_name"]}">{p["outcome_name"]}</span>{html.escape(p["kind"])}<br>'
