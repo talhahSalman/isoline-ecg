@@ -1,0 +1,32 @@
+{
+  "tau": 0.8999999974285714,
+  "outcomes": [
+    {
+      "outcome": "reliable",
+      "n": 984,
+      "share": "22.8%",
+      "top1_accuracy": "89.6%"
+    },
+    {
+      "outcome": "flagged (models disagree)",
+      "n": 1201,
+      "share": "27.8%",
+      "top1_accuracy": "52.6%"
+    },
+    {
+      "outcome": "image-only (signal path untrusted)",
+      "n": 1596,
+      "share": "37.0%",
+      "top1_accuracy": "82.0%"
+    },
+    {
+      "outcome": "rejected (retake the image)",
+      "n": 535,
+      "share": "12.4%",
+      "top1_accuracy": "77.4%"
+    }
+  ],
+  "image_only_top1": 0.8239110287303059,
+  "answered_top1": 0.7463633959270034,
+  "reliable_top1": 0.8963414634146342
+}

@@ -1,0 +1,12 @@
+file,labels,kind
+ecg_01.jpg,NORM,clean print
+ecg_02.jpg,MI,clean print
+ecg_03.jpg,STTC,clean print
+ecg_04.jpg,CD,clean print
+ecg_05.jpg,HYP,clean print
+ecg_06.jpg,NORM,good photo
+ecg_07.jpg,STTC,good photo
+ecg_08.jpg,MI|CD,fair photo
+ecg_09.jpg,NORM,fair photo
+ecg_10.jpg,NORM,bad photo
+ecg_11.jpg,STTC,bad photo

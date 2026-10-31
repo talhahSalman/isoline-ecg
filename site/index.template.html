@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Isoline · Reads the ECG. Knows when not to.</title>
+<meta name="description" content="Isoline screens photos and scans of 12-lead ECGs for five cardiac patterns, checks the photo quality first, and asks for a better picture instead of guessing.">
+<style>
+:root{--bg:#0b0d12;--card:#141821;--line:#232a38;--text:#e6e8ee;--muted:#9099ab;--red:#e74c3c;--green:#2ecc71;--amber:#f39c12;--blue:#3498db}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--text)}a:hover{color:var(--red)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 22px}
+nav{position:sticky;top:0;background:rgba(11,13,18,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);z-index:5}
+nav .wrap{display:flex;align-items:center;gap:22px;height:58px;overflow-x:auto;white-space:nowrap}
+nav b{font-size:19px;letter-spacing:.02em}nav b span{color:var(--red)}nav a{color:var(--muted);text-decoration:none;font-size:14px}nav a:hover{color:var(--text)}
+.hero{padding:76px 0 44px}
+.eyebrow{color:var(--red);letter-spacing:.28em;font-size:12px;font-weight:700}
+h1{font-size:clamp(44px,8vw,84px);line-height:1.02;margin:10px 0 14px;letter-spacing:-.02em}h1 span{color:var(--red)}
+.tag{font-size:clamp(19px,3vw,25px);color:var(--muted);max-width:640px;margin:0 0 26px}
+.btns{display:flex;gap:12px;flex-wrap:wrap}.btn{display:inline-block;padding:11px 20px;border-radius:9px;text-decoration:none;font-weight:600;border:1px solid var(--line);background:var(--card)}
+.btn.main{background:var(--red);border-color:var(--red);color:#fff}.btn:hover{color:#fff;border-color:var(--red)}
+.beat{margin:34px 0 0;width:100%;height:70px}.beat path{fill:none;stroke:var(--red);stroke-width:2;stroke-linejoin:round}
+.chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:30px}
+.chip{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--red);border-radius:10px;padding:16px 18px}
+.chip b{display:block;font-size:34px;line-height:1.1}.chip small{color:var(--muted)}
+section{padding:52px 0;border-top:1px solid var(--line)}
+h2{font-size:28px;margin:0 0 6px}h2+p.lead{color:var(--muted);margin:0 0 26px;max-width:720px}
+h3{margin:0 0 6px;font-size:17px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(172px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+.card .n{color:var(--red);font-weight:800;font-size:13px;letter-spacing:.15em}.card p{margin:6px 0 0;color:var(--muted);font-size:15px}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:15px}
+th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+tr:last-child td{border-bottom:0}td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}@media(max-width:760px){.two{grid-template-columns:1fr}}
+.figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:22px}
+.figs img{width:100%;border-radius:10px;border:1px solid var(--line);background:var(--card)}
+.demo{width:100%;height:760px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.note{color:var(--muted);font-size:14px}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px;margin-top:18px}
+figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+figure img{width:100%;display:block}figcaption{padding:12px 14px;font-size:14px}
+.badge{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:700;color:#fff;margin-right:6px}
+.b-reliable{background:#1e8e5a}.b-flagged{background:#c97a1f}.b-image-only{background:#2f7bd1}.b-rejected{background:#c0392b}
+pre{background:#05070a;border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto;font-size:14px;line-height:1.5}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+ul.links{list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px}
+ul.links li a{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;text-decoration:none}
+ul.links li a:hover{border-color:var(--red)}ul.links b{display:block}ul.links span{color:var(--muted);font-size:14px}
+footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<nav><div class="wrap"><b>Iso<span>line</span></b>
+<a href="#how">How it works</a><a href="#results">Results</a><a href="#demo">Demo</a><a href="#data">Data &amp; code</a><a href="#materials">Report &amp; video</a><a href="#limits">Limits</a></div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="eyebrow">ISOLINE · ECG SCREENING</div>
+  <h1>Reads the ECG.<br><span>Knows when not to.</span></h1>
+  <p class="tag">Upload a scan or a phone photo of a 12-lead ECG. Isoline checks the picture first, reads it two different ways, and asks for a better photo instead of guessing.</p>
+  <div class="btns"><a class="btn main" href="#demo">See it work</a><a class="btn" href="{{GITHUB}}">GitHub repository</a><a class="btn" href="{{YOUTUBE}}">Watch the video</a></div>
+  <svg class="beat" viewBox="0 0 1000 70" preserveAspectRatio="none" aria-hidden="true"><path d="M0,40 H120 l10,-6 l10,6 H200 l8,4 l10,-36 l10,50 l8,-18 H330 l14,-12 l16,12 H520 l10,-6 l10,6 H600 l8,4 l10,-36 l10,50 l8,-18 H730 l14,-12 l16,12 H1000"/></svg>
+  <div class="chips">
+    <div class="chip"><b>{{M_SIGNAL_AUC}}</b>macro AUC, signal model<br><small>PTB-XL held-out test set</small></div>
+    <div class="chip"><b>{{M_QUALITY}}</b>photo-quality gate accuracy<br><small>good / fair / bad</small></div>
+    <div class="chip"><b>{{M_RELIABLE}}</b>accuracy when both models agree<br><small>vs {{M_BASE}} answering everything</small></div>
+  </div>
+</div></header>
+
+<section id="how"><div class="wrap">
+  <h2>How it works</h2>
+  <p class="lead">Most ECG tools assume a perfect input. Real ECGs arrive as crumpled printouts, shadowed phone photos and tilted scans, so Isoline's first question is "can I trust this picture?"</p>
+  <div class="cards">
+    <div class="card"><div class="n">01</div><h3>Check the picture</h3><p>A quality gate rates the photo good, fair or bad. Bad photos stop here with a request to retake them.</p></div>
+    <div class="card"><div class="n">02</div><h3>Read the image</h3><p>An EfficientNet looks at the whole ECG picture and scores five patterns: normal, infarction, ST/T change, conduction disturbance and hypertrophy.</p></div>
+    <div class="card"><div class="n">03</div><h3>Rebuild the waveform</h3><p>A digitizer traces the pen line of every lead and turns it back into millivolt signals.</p></div>
+    <div class="card"><div class="n">04</div><h3>Cross-check</h3><p>A 1D CNN + Transformer reads the rebuilt signals. If both models agree, the answer is marked reliable. If not, it is flagged.</p></div>
+    <div class="card"><div class="n">05</div><h3>Explain and report</h3><p>Grad-CAM heatmaps show where the image model looked, and a one-page report collects everything.</p></div>
+  </div>
+</div></section>
+
+<section id="results"><div class="wrap">
+  <h2>Results</h2>
+  <p class="lead">All numbers are measured on the held-out test split of PTB-XL (recordings from patients the models never saw during training).</p>
+  <div class="two">
+    <div><h3>Per-class AUC</h3>
+    <table><tr><th>Class</th><th class="num">Signal model<br>(full 10 s)</th><th class="num">Signal model<br>(printout layout)</th><th class="num">Image model</th></tr>
+    {{PER_CLASS_ROWS}}
+    <tr><td><b>Macro average</b></td><td class="num"><b>{{M_SIGNAL_AUC}}</b></td><td class="num"><b>{{M_LAYOUT_AUC}}</b></td><td class="num"><b>{{M_IMAGE_AUC}}</b></td></tr></table></div>
+    <div><h3>Answering less, but more reliably</h3>
+    <table><tr><th>When Isoline answers</th><th class="num">Answers</th><th class="num">Top-1 accuracy</th></tr>{{POLICY_ROWS}}</table>
+    <p class="note">Top-1 accuracy counts a prediction as right if it matches any of the patient's recorded labels. Rebuilding the waveform from the picture costs accuracy: the signal model drops from {{M_LAYOUT_AUC}} AUC on perfect signals to about {{M_REBUILT_AUC}} on rebuilt ones, which is why the image model gives the final answer and the waveform path acts as a cross-check.</p></div>
+  </div>
+  <div class="figs">{{FIGURES}}</div>
+</div></section>
+
+<section id="demo"><div class="wrap">
+  <h2>Try it</h2>
+  <p class="lead">{{DEMO_LEAD}}</p>
+  {{DEMO}}
+  <h3 style="margin-top:34px">Real outputs on test pictures</h3>
+  <p class="note">These pictures were drawn at random from the test split (not hand-picked), and the results below are what the model returned, including its mistakes. Click a picture's report link to see the full one-page report.</p>
+  <div class="gallery">{{EXAMPLES}}</div>
+</div></section>
+
+<section id="data"><div class="wrap">
+  <h2>Dataset and code</h2>
+  <div class="two">
+    <div><h3>Dataset</h3>
+    <p><a href="https://physionet.org/content/ptb-xl/1.0.3/">PTB-XL</a> is a public collection of 21,799 clinical 12-lead ECGs (10 seconds each), annotated by cardiologists. We keep the 21,388 records that have a diagnosis and group the labels into five classes: NORM, MI, STTC, CD, HYP. We use the official split: folds 1-8 train, 9 validation, 10 test. Each record became two pictures: a clean printout and a simulated phone photo (tilt, shadows, creases, blur, noise, JPEG), 42,776 images in total.</p></div>
+    <div><h3>Models</h3>
+    <p><b>Image model:</b> EfficientNet-B0 with two heads (diagnosis and photo quality), 4.0 M parameters.<br><b>Signal model:</b> residual 1D-CNN with squeeze-excite blocks and a 3-layer Transformer, trained on full signals and then adapted to the 2.5-second windows a printout actually shows.<br><b>Digitizer:</b> classical computer vision, no learning.</p></div>
+  </div>
+  <h3>Run it yourself</h3>
+<pre><code>git clone {{GITHUB}}
+cd isoline-ecg
+pip install -r requirements.txt
+python predict.py --image samples/ecg_01.jpg --report report.html</code></pre>
+  <p>The repository contains the training notebook, the model code, the trained weights, example pictures and this website.</p>
+</div></section>
+
+<section id="materials"><div class="wrap">
+  <h2>Report, slides and video</h2>
+  <ul class="links">
+    <li><a href="{{REPORT}}"><b>Project report</b><span>Problem, data, architecture, training, results</span></a></li>
+    <li><a href="{{SLIDES}}"><b>Presentation</b><span>Slides used in the video</span></a></li>
+    <li><a href="{{YOUTUBE}}"><b>YouTube video</b><span>Voice-over walkthrough</span></a></li>
+    <li><a href="{{GITHUB}}"><b>GitHub repository</b><span>Code, weights, notebook</span></a></li>
+    <li><a href="{{LINKEDIN}}"><b>LinkedIn post</b><span>Project announcement</span></a></li>
+  </ul>
+</div></section>
+
+<section id="limits"><div class="wrap">
+  <h2>What Isoline cannot do (yet)</h2>
+  <ul>
+    <li><b>Not a medical device.</b> It is a learning project and a screening aid, not a diagnosis.</li>
+    <li><b>Trained on rendered ECGs.</b> Every picture is a PTB-XL signal printed by our own renderer. It has not been tested on real clinic scans or real phone photos.</li>
+    <li><b>Tilted phone photos.</b> Straightening them well enough to rebuild the waveform is not solved. Only well-aligned prints reach the waveform check, and the rest are answered by the image model alone.</li>
+    <li><b>Resolution limits the rebuilt signal.</b> Our pictures carry fewer than one pixel per sample, so sharp R-peaks are slightly clipped.</li>
+    <li><b>Uneven classes.</b> The hypertrophy class is the hardest (AUC about 0.90). Labels in PTB-XL are noisy, which caps what any model can reach.</li>
+  </ul>
+</div></section>
+
+<footer><div class="wrap">Isoline is a university deep-learning project. It does not provide medical advice or diagnosis. Data: PTB-XL, CC BY 4.0, PhysioNet.</div></footer>
+</body>
+</html>

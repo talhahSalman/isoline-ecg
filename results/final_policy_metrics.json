@@ -1,0 +1,47 @@
+{
+  "tau": 0.8999999974285714,
+  "outcomes": [
+    {
+      "outcome": "reliable",
+      "n": 984,
+      "share": "22.8%",
+      "image_top1_accuracy": "89.6%"
+    },
+    {
+      "outcome": "flagged (models disagree)",
+      "n": 1201,
+      "share": "27.8%",
+      "image_top1_accuracy": "79.1%"
+    },
+    {
+      "outcome": "image-only (signal path untrusted)",
+      "n": 1596,
+      "share": "37.0%",
+      "image_top1_accuracy": "82.0%"
+    },
+    {
+      "outcome": "rejected (retake the image)",
+      "n": 535,
+      "share": "12.4%",
+      "image_top1_accuracy": "77.8%"
+    }
+  ],
+  "policies": {
+    "A \u00b7 answer every image": {
+      "answered": 1.0,
+      "top1": 0.8239110287303059
+    },
+    "B \u00b7 answer unless the quality gate rejects": {
+      "answered": 0.8760426320667285,
+      "top1": 0.8304681301243058
+    },
+    "C \u00b7 B, but withhold when the two models disagree": {
+      "answered": 0.597775718257646,
+      "top1": 0.8488372093023255
+    },
+    "D \u00b7 answer only when both models agree": {
+      "answered": 0.22798887859128822,
+      "top1": 0.8963414634146342
+    }
+  }
+}

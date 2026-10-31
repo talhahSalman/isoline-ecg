@@ -1,0 +1,21 @@
+{
+  "records": 21388,
+  "images": 42776,
+  "per_split": {
+    "train": 17084,
+    "val": 2146,
+    "test": 2158
+  },
+  "class_counts": {
+    "NORM": 9514,
+    "MI": 5469,
+    "STTC": 5235,
+    "CD": 4898,
+    "HYP": 2649
+  },
+  "photo_mix": {
+    "good": 8640,
+    "fair": 7379,
+    "bad": 5369
+  }
+}

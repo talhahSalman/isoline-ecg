@@ -1,0 +1,35 @@
+{
+  "tau": 0.8999999974285714,
+  "table": {
+    "n": {
+      "clean prints": 2158.0,
+      "good photos": 867.0,
+      "fair photos": 716.0,
+      "bad photos": 575.0
+    },
+    "alignment_median": {
+      "clean prints": 1.0,
+      "good photos": 0.3872,
+      "fair photos": 0.0,
+      "bad photos": 0.0
+    },
+    "pct_trusted": {
+      "clean prints": 100.0,
+      "good photos": 2.3068,
+      "fair photos": 0.9777,
+      "bad photos": 1.7391
+    },
+    "recon_corr_all": {
+      "clean prints": 0.6842,
+      "good photos": 0.1821,
+      "fair photos": 0.0326,
+      "bad photos": 0.0043
+    },
+    "recon_corr_trusted": {
+      "clean prints": 0.6842,
+      "good photos": 0.2902,
+      "fair photos": 0.0032,
+      "bad photos": 0.0108
+    }
+  }
+}

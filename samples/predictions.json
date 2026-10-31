@@ -1,0 +1,408 @@
+[
+  {
+    "file": "ecg_01.jpg",
+    "kind": "clean print",
+    "truth": [
+      "NORM"
+    ],
+    "correct": true,
+    "outcome": 1,
+    "outcome_name": "flagged",
+    "message": "The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model's best guess is: normal ECG.",
+    "top": "NORM",
+    "advice": "Nothing abnormal was flagged. A normal screening result does not rule out heart disease, so symptoms still matter.",
+    "found": [
+      "NORM"
+    ],
+    "image_probs": {
+      "NORM": 0.9299365282058716,
+      "MI": 0.016549723222851753,
+      "STTC": 0.06359823793172836,
+      "CD": 0.03858670964837074,
+      "HYP": 0.021767348051071167
+    },
+    "quality": "good",
+    "quality_probs": {
+      "good": 0.9999970197677612,
+      "fair": 2.652396460689488e-06,
+      "bad": 3.5424932320893276e-07
+    },
+    "alignment": 0.9999999980314961,
+    "aligned": true,
+    "signal_probs": {
+      "NORM": 0.10279025882482529,
+      "MI": 0.06796431541442871,
+      "STTC": 0.008174793794751167,
+      "CD": 0.9906913638114929,
+      "HYP": 0.14751359820365906
+    },
+    "signal_top": "CD",
+    "disclaimer": "Isoline is a learning project and a screening aid. It is not a medical device and does not give a diagnosis."
+  },
+  {
+    "file": "ecg_02.jpg",
+    "kind": "clean print",
+    "truth": [
+      "MI"
+    ],
+    "correct": true,
+    "outcome": 1,
+    "outcome_name": "flagged",
+    "message": "The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model's best guess is: myocardial infarction pattern.",
+    "top": "MI",
+    "advice": "The pattern resembles a heart attack, old or new. If there is chest pain or breathlessness, seek urgent medical care. Otherwise, ask a clinician to review the ECG.",
+    "found": [
+      "MI"
+    ],
+    "image_probs": {
+      "NORM": 0.2179591953754425,
+      "MI": 0.6816467642784119,
+      "STTC": 0.16394756734371185,
+      "CD": 0.1382448673248291,
+      "HYP": 0.09954513609409332
+    },
+    "quality": "good",
+    "quality_probs": {
+      "good": 0.9999947547912598,
+      "fair": 2.711951538003632e-06,
+      "bad": 2.4521152681700187e-06
+    },
+    "alignment": 0.9999999990421455,
+    "aligned": true,
+    "signal_probs": {
+      "NORM": 0.007237816229462624,
+      "MI": 0.34573641419410706,
+      "STTC": 0.004971968941390514,
+      "CD": 0.998762845993042,
+      "HYP": 0.14193066954612732
+    },
+    "signal_top": "CD",
+    "disclaimer": "Isoline is a learning project and a screening aid. It is not a medical device and does not give a diagnosis."
+  },
+  {
+    "file": "ecg_03.jpg",
+    "kind": "clean print",
+    "truth": [
+      "STTC"
+    ],
+    "correct": false,
+    "outcome": 1,
+    "outcome_name": "flagged",
+    "message": "The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model's best guess is: normal ECG.",
+    "top": "NORM",
+    "advice": "Nothing abnormal was flagged. A normal screening result does not rule out heart disease, so symptoms still matter.",
+    "found": [
+      "NORM"
+    ],
+    "image_probs": {
+      "NORM": 0.9680821299552917,
+      "MI": 0.007882137782871723,
+      "STTC": 0.042412374168634415,
+      "CD": 0.006655280478298664,
+      "HYP": 0.004889452829957008
+    },
+    "quality": "good",
+    "quality_probs": {
+      "good": 0.9999988079071045,
+      "fair": 1.1347819963702932e-06,
+      "bad": 2.879222726903663e-08
+    },
+    "alignment": 0.9999999990557128,
+    "aligned": true,
+    "signal_probs": {
+      "NORM": 0.08786512911319733,
+      "MI": 0.8499755859375,
+      "STTC": 0.05853306129574776,
+      "CD": 0.20237083733081818,
+      "HYP": 0.006309357937425375
+    },
+    "signal_top": "MI",
+    "disclaimer": "Isoline is a learning project and a screening aid. It is not a medical device and does not give a diagnosis."
+  },
+  {
+    "file": "ecg_04.jpg",
+    "kind": "clean print",
+    "truth": [
+      "CD"
+    ],
+    "correct": true,
+    "outcome": 0,
+    "outcome_name": "reliable",
+    "message": "Both checks agree. The most likely finding is: conduction disturbance.",
+    "top": "CD",
+    "advice": "A conduction pattern (for example a bundle branch block) was flagged. A clinician should confirm it.",
+    "found": [
+      "CD"
+    ],
+    "image_probs": {
+      "NORM": 0.012967986986041069,
+      "MI": 0.09984549880027771,
+      "STTC": 0.02147781476378441,
+      "CD": 0.992608368396759,
+      "HYP": 0.13275380432605743
+    },
+    "quality": "good",
+    "quality_probs": {
+      "good": 0.9999955892562866,
+      "fair": 2.9592285955004627e-06,
+      "bad": 1.4090646800468676e-06
+    },
+    "alignment": 0.9999999971428571,
+    "aligned": true,
+    "signal_probs": {
+      "NORM": 0.001353637664578855,
+      "MI": 0.5011866092681885,
+      "STTC": 0.07144304364919662,
+      "CD": 0.9962453246116638,
+      "HYP": 0.007050566840916872
+    },
+    "signal_top": "CD",
+    "disclaimer": "Isoline is a learning project and a screening aid. It is not a medical device and does not give a diagnosis."
+  },
+  {
+    "file": "ecg_05.jpg",
+    "kind": "clean print",
+    "truth": [
+      "HYP"
+    ],
+    "correct": true,
+    "outcome": 1,
+    "outcome_name": "flagged",
+    "message": "The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model's best guess is: hypertrophy pattern.",
+    "top": "HYP",
+    "advice": "Signs that look like an enlarged heart chamber were flagged. A clinician should confirm them, usually with an echocardiogram.",
+    "found": [
+      "STTC",
+      "HYP"
+    ],
+    "image_probs": {
+      "NORM": 0.06724914908409119,
+      "MI": 0.03285706043243408,
+      "STTC": 0.5702114105224609,
+      "CD": 0.039577919989824295,
+      "HYP": 0.924953043460846
+    },
+    "quality": "good",
+    "quality_probs": {
+      "good": 0.9999959468841553,
+      "fair": 3.4962415611516917e-06,
+      "bad": 6.15202907283674e-07
+    },
+    "alignment": 0.9999999971590909,
+    "aligned": true,
+    "signal_probs": {
+      "NORM": 0.06387915462255478,
+      "MI": 0.4997125267982483,
+      "STTC": 0.17805682122707367,
+      "CD": 0.6820707321166992,
+      "HYP": 0.4596371650695801
+    },
+    "signal_top": "CD",
+    "disclaimer": "Isoline is a learning project and a screening aid. It is not a medical device and does not give a diagnosis."
+  },
+  {
+    "file": "ecg_06.jpg",
+    "kind": "good photo",
+    "truth": [
+      "NORM"
+    ],
+    "correct": true,
+    "outcome": 2,
+    "outcome_name": "image-only",
+    "message": "Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: normal ECG.",
+    "top": "NORM",
+    "advice": "Nothing abnormal was flagged. A normal screening result does not rule out heart disease, so symptoms still matter.",
+    "found": [
+      "NORM"
+    ],
+    "image_probs": {
+      "NORM": 0.9648915529251099,
+      "MI": 0.023103976622223854,
+      "STTC": 0.004842104855924845,
+      "CD": 0.026716355234384537,
+      "HYP": 0.008439755067229271
+    },
+    "quality": "good",
+    "quality_probs": {
+      "good": 1.0,
+      "fair": 2.920362840441726e-09,
+      "bad": 9.078321983047033e-10
+    },
+    "alignment": 0.30555555498971193,
+    "aligned": false,
+    "signal_probs": null,
+    "signal_top": null,
+    "disclaimer": "Isoline is a learning project and a screening aid. It is not a medical device and does not give a diagnosis."
+  },
+  {
+    "file": "ecg_07.jpg",
+    "kind": "good photo",
+    "truth": [
+      "STTC"
+    ],
+    "correct": true,
+    "outcome": 2,
+    "outcome_name": "image-only",
+    "message": "Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: ST/T-wave change.",
+    "top": "STTC",
+    "advice": "ST/T-wave changes were flagged. They have many causes, so please have a clinician review the ECG.",
+    "found": [
+      "STTC"
+    ],
+    "image_probs": {
+      "NORM": 0.1977299153804779,
+      "MI": 0.08564876019954681,
+      "STTC": 0.7065773010253906,
+      "CD": 0.14105461537837982,
+      "HYP": 0.061958178877830505
+    },
+    "quality": "good",
+    "quality_probs": {
+      "good": 0.9999935626983643,
+      "fair": 5.450837761600269e-06,
+      "bad": 9.805835361476056e-07
+    },
+    "alignment": 0.546956521263516,
+    "aligned": false,
+    "signal_probs": null,
+    "signal_top": null,
+    "disclaimer": "Isoline is a learning project and a screening aid. It is not a medical device and does not give a diagnosis."
+  },
+  {
+    "file": "ecg_08.jpg",
+    "kind": "fair photo",
+    "truth": [
+      "MI",
+      "CD"
+    ],
+    "correct": true,
+    "outcome": 2,
+    "outcome_name": "image-only",
+    "message": "Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: conduction disturbance.",
+    "top": "CD",
+    "advice": "A conduction pattern (for example a bundle branch block) was flagged. A clinician should confirm it.",
+    "found": [
+      "CD"
+    ],
+    "image_probs": {
+      "NORM": 0.018393293023109436,
+      "MI": 0.18068824708461761,
+      "STTC": 0.22637531161308289,
+      "CD": 0.9692721962928772,
+      "HYP": 0.016591154038906097
+    },
+    "quality": "fair",
+    "quality_probs": {
+      "good": 2.8136435403780524e-09,
+      "fair": 1.0,
+      "bad": 2.059871440085459e-10
+    },
+    "alignment": 0.0,
+    "aligned": false,
+    "signal_probs": null,
+    "signal_top": null,
+    "disclaimer": "Isoline is a learning project and a screening aid. It is not a medical device and does not give a diagnosis."
+  },
+  {
+    "file": "ecg_09.jpg",
+    "kind": "fair photo",
+    "truth": [
+      "NORM"
+    ],
+    "correct": true,
+    "outcome": 2,
+    "outcome_name": "image-only",
+    "message": "Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: normal ECG.",
+    "top": "NORM",
+    "advice": "Nothing abnormal was flagged. A normal screening result does not rule out heart disease, so symptoms still matter.",
+    "found": [
+      "NORM"
+    ],
+    "image_probs": {
+      "NORM": 0.9759331345558167,
+      "MI": 0.006851709447801113,
+      "STTC": 0.014933464117348194,
+      "CD": 0.01788170263171196,
+      "HYP": 0.005205156281590462
+    },
+    "quality": "fair",
+    "quality_probs": {
+      "good": 3.0721192700866595e-08,
+      "fair": 1.0,
+      "bad": 7.988687489302038e-10
+    },
+    "alignment": 0.0,
+    "aligned": false,
+    "signal_probs": null,
+    "signal_top": null,
+    "disclaimer": "Isoline is a learning project and a screening aid. It is not a medical device and does not give a diagnosis."
+  },
+  {
+    "file": "ecg_10.jpg",
+    "kind": "bad photo",
+    "truth": [
+      "NORM"
+    ],
+    "correct": true,
+    "outcome": 3,
+    "outcome_name": "rejected",
+    "message": "This image is not clear enough to read safely. Please retake it. Lay the page flat, use even light without shadows, keep the whole printout in the frame, and hold the camera steady.",
+    "top": "NORM",
+    "advice": "Lay the page flat, use even light without shadows, keep the whole printout in the frame, and hold the camera steady.",
+    "found": [
+      "NORM"
+    ],
+    "image_probs": {
+      "NORM": 0.8982993960380554,
+      "MI": 0.09709929674863815,
+      "STTC": 0.020824404433369637,
+      "CD": 0.023571854457259178,
+      "HYP": 0.007896260358393192
+    },
+    "quality": "bad",
+    "quality_probs": {
+      "good": 2.6025119836958766e-07,
+      "fair": 4.756815997097874e-06,
+      "bad": 0.9999949932098389
+    },
+    "alignment": 0.0,
+    "aligned": false,
+    "signal_probs": null,
+    "signal_top": null,
+    "disclaimer": "Isoline is a learning project and a screening aid. It is not a medical device and does not give a diagnosis."
+  },
+  {
+    "file": "ecg_11.jpg",
+    "kind": "bad photo",
+    "truth": [
+      "STTC"
+    ],
+    "correct": true,
+    "outcome": 3,
+    "outcome_name": "rejected",
+    "message": "This image is not clear enough to read safely. Please retake it. Lay the page flat, use even light without shadows, keep the whole printout in the frame, and hold the camera steady.",
+    "top": "STTC",
+    "advice": "Lay the page flat, use even light without shadows, keep the whole printout in the frame, and hold the camera steady.",
+    "found": [
+      "STTC"
+    ],
+    "image_probs": {
+      "NORM": 0.08683619648218155,
+      "MI": 0.04626263678073883,
+      "STTC": 0.8517332077026367,
+      "CD": 0.047882188111543655,
+      "HYP": 0.039572302252054214
+    },
+    "quality": "bad",
+    "quality_probs": {
+      "good": 5.0383077905280516e-06,
+      "fair": 2.8041269615641795e-05,
+      "bad": 0.9999668598175049
+    },
+    "alignment": 0.3181818037190089,
+    "aligned": false,
+    "signal_probs": null,
+    "signal_top": null,
+    "disclaimer": "Isoline is a learning project and a screening aid. It is not a medical device and does not give a diagnosis."
+  }
+]
