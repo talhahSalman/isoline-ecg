@@ -126,16 +126,28 @@ def build(args):
         demo_lead = "Upload a picture of a 12-lead ECG below, or open the demo in its own tab. The free demo server sleeps when idle and takes up to a minute to wake, so the real outputs further down always work."
         demo = (f'<iframe class="demo" src="{html.escape(args.space)}" title="Isoline live demo" loading="lazy"></iframe>'
                 f'<p class="note"><a href="{html.escape(args.space)}">Open the live demo in a new tab</a></p>')
+        usage = ('<ol class="steps">'
+                 '<li>Pick one of the example pictures under the upload box, or upload your own scan or phone photo of a 12-lead ECG (JPG or PNG).</li>'
+                 '<li>Press <b>Analyse</b>. The first request can take up to a minute while the free demo server wakes up.</li>'
+                 '<li>Read the verdict at the top, then the scores, the heat map (where the model looked) and the downloadable one-page report.</li>'
+                 '<li>For a good photo: lay the page flat, use even light without shadows, keep the whole printout in the frame and hold the camera steady.</li>'
+                 '</ol>')
     else:
-        demo_lead = "The live demo is being set up. Real outputs on test pictures are below."
+        demo_lead = "Look at real model outputs on test pictures below, or run Isoline on your own picture with one command."
         demo = ""
+        usage = ('<ol class="steps">'
+                 '<li>Get the code: <code>git clone ' + html.escape(args.github) + '</code></li>'
+                 '<li>Install the requirements: <code>pip install -r requirements.txt</code></li>'
+                 '<li>Run it on your picture: <code>python predict.py --image your_picture.jpg --report report.html</code></li>'
+                 '<li>Open <code>report.html</code> in a browser for the verdict, scores, heat map and rebuilt waveforms.</li>'
+                 '</ol>')
 
     tokens = {"GITHUB": args.github, "SPACE": args.space, "YOUTUBE": args.youtube, "LINKEDIN": args.linkedin,
               "REPORT": args.report, "SLIDES": args.slides,
               "M_SIGNAL_AUC": f"{m['signal_auc']:.3f}", "M_LAYOUT_AUC": f"{m['layout_auc']:.3f}", "M_IMAGE_AUC": f"{m['image_auc']:.3f}",
               "M_REBUILT_AUC": f"{m['rebuilt_auc']:.3f}", "M_QUALITY": pct(m["quality_acc"]), "M_RELIABLE": pct(reliable), "M_BASE": pct(base),
               "PER_CLASS_ROWS": per_class, "POLICY_ROWS": policy_rows, "FIGURES": "\n".join(figs),
-              "DEMO_LEAD": demo_lead, "DEMO": demo, "EXAMPLES": example_cards(link_reports=True)}
+              "DEMO_LEAD": demo_lead, "DEMO": demo, "USAGE": usage, "EXAMPLES": example_cards(link_reports=True)}
     page = (SITE / "index.template.html").read_text(encoding="utf-8")
     for k, v in tokens.items():
         page = page.replace("{{" + k + "}}", v)

@@ -8,11 +8,11 @@ It was built as a semester project for a Deep Learning course, and it is meant f
 
 | | |
 |---|---|
-| Website | # |
-| Video walkthrough | # |
+| Website | https://isoline-ecg.vercel.app |
+| Video walkthrough |  |
 | Project report | [docs/Isoline_Report.pdf](docs/Isoline_Report.pdf) |
 | Slides | [docs/Isoline_Slides.pdf](docs/Isoline_Slides.pdf) |
-| LinkedIn post | # |
+| LinkedIn post |  |
 
 ## What it does
 

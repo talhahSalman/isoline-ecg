@@ -38,6 +38,9 @@ tr:last-child td{border-bottom:0}td.num,th.num{text-align:right;font-variant-num
 .figs img{width:100%;border-radius:10px;border:1px solid var(--line);background:var(--card)}
 .demo{width:100%;height:760px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
 .note{color:var(--muted);font-size:14px}
+ol.steps{padding-left:20px;margin:6px 0 0}ol.steps li{margin:0 0 9px}
+.legend p{margin:0 0 10px;color:var(--muted);font-size:15px}.legend .badge{min-width:86px;text-align:center}
+.demo{margin:0 0 30px}
 .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px;margin-top:18px}
 figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
 figure img{width:100%;display:block}figcaption{padding:12px 14px;font-size:14px}
@@ -53,13 +56,13 @@ footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);f
 </head>
 <body>
 <nav><div class="wrap"><b>Iso<span>line</span></b>
-<a href="#how">How it works</a><a href="#results">Results</a><a href="#demo">Demo</a><a href="#data">Data &amp; code</a><a href="#materials">Report &amp; video</a><a href="#limits">Limits</a></div></nav>
+<a href="#demo">Try it</a><a href="#how">How it works</a><a href="#results">Results</a><a href="#data">Data &amp; code</a><a href="#materials">Report &amp; video</a><a href="#limits">Limits</a></div></nav>
 
 <header class="hero"><div class="wrap">
   <div class="eyebrow">ISOLINE · ECG SCREENING</div>
   <h1>Reads the ECG.<br><span>Knows when not to.</span></h1>
   <p class="tag">Upload a scan or a phone photo of a 12-lead ECG. Isoline checks the picture first, reads it two different ways, and asks for a better photo instead of guessing.</p>
-  <div class="btns"><a class="btn main" href="#demo">See it work</a><a class="btn" href="https://github.com/talhahSalman/isoline-ecg">GitHub repository</a><a class="btn" href="#">Watch the video</a></div>
+  <div class="btns"><a class="btn main" href="#demo">See it work</a><a class="btn" href="https://github.com/talhahSalman/isoline-ecg">GitHub repository</a><a class="btn" href="">Watch the video</a></div>
   <svg class="beat" viewBox="0 0 1000 70" preserveAspectRatio="none" aria-hidden="true"><path d="M0,40 H120 l10,-6 l10,6 H200 l8,4 l10,-36 l10,50 l8,-18 H330 l14,-12 l16,12 H520 l10,-6 l10,6 H600 l8,4 l10,-36 l10,50 l8,-18 H730 l14,-12 l16,12 H1000"/></svg>
   <div class="chips">
     <div class="chip"><b>0.929</b>macro AUC, signal model<br><small>PTB-XL held-out test set</small></div>
@@ -67,6 +70,39 @@ footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);f
     <div class="chip"><b>89.6%</b>accuracy when both models agree<br><small>vs 82.4% answering everything</small></div>
   </div>
 </div></header>
+
+<section id="demo"><div class="wrap">
+  <h2>Try it yourself</h2>
+  <p class="lead">Look at real model outputs on test pictures below, or run Isoline on your own picture with one command.</p>
+  
+  <div class="two">
+    <div>
+      <h3>How to use it</h3>
+      <ol class="steps"><li>Get the code: <code>git clone https://github.com/talhahSalman/isoline-ecg</code></li><li>Install the requirements: <code>pip install -r requirements.txt</code></li><li>Run it on your picture: <code>python predict.py --image your_picture.jpg --report report.html</code></li><li>Open <code>report.html</code> in a browser for the verdict, scores, heat map and rebuilt waveforms.</li></ol>
+    </div>
+    <div class="legend">
+      <h3>What the answer means</h3>
+      <p><span class="badge b-reliable">Reliable</span> The picture and the rebuilt waveform point to the same finding.</p>
+      <p><span class="badge b-flagged">Uncertain</span> The two checks disagree. Treat it as a rough hint and ask a clinician.</p>
+      <p><span class="badge b-image-only">Image only</span> The photo is readable but too tilted to rebuild the waveform, so only the image model answered.</p>
+      <p><span class="badge b-rejected">Retake</span> The photo is too poor to read safely. No answer is given.</p>
+    </div>
+  </div>
+  <h3 style="margin-top:34px">Real outputs on test pictures</h3>
+  <p class="note">These pictures were drawn at random from the test split (not hand-picked), and the results below are what the model returned, including its mistakes. Click a picture's report link to see the full one-page report.</p>
+  <div class="gallery"><figure><img src="assets/samples/ecg_01.jpg" alt="ECG example, clean print" loading="lazy"><figcaption><span class="badge b-flagged">flagged</span>clean print<br>Recorded: <b>NORM</b> · top pick <b>NORM</b> ✓ matches<br><span class="note">The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model&#x27;s best guess is: normal ECG.</span> · <a href="assets/reports/ecg_01.html">full report</a></figcaption></figure>
+<figure><img src="assets/samples/ecg_02.jpg" alt="ECG example, clean print" loading="lazy"><figcaption><span class="badge b-flagged">flagged</span>clean print<br>Recorded: <b>MI</b> · top pick <b>MI</b> ✓ matches<br><span class="note">The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model&#x27;s best guess is: myocardial infarction pattern.</span> · <a href="assets/reports/ecg_02.html">full report</a></figcaption></figure>
+<figure><img src="assets/samples/ecg_03.jpg" alt="ECG example, clean print" loading="lazy"><figcaption><span class="badge b-flagged">flagged</span>clean print<br>Recorded: <b>STTC</b> · top pick <b>NORM</b> ✗ does not match<br><span class="note">The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model&#x27;s best guess is: normal ECG.</span> · <a href="assets/reports/ecg_03.html">full report</a></figcaption></figure>
+<figure><img src="assets/samples/ecg_04.jpg" alt="ECG example, clean print" loading="lazy"><figcaption><span class="badge b-reliable">reliable</span>clean print<br>Recorded: <b>CD</b> · top pick <b>CD</b> ✓ matches<br><span class="note">Both checks agree. The most likely finding is: conduction disturbance.</span> · <a href="assets/reports/ecg_04.html">full report</a></figcaption></figure>
+<figure><img src="assets/samples/ecg_05.jpg" alt="ECG example, clean print" loading="lazy"><figcaption><span class="badge b-flagged">flagged</span>clean print<br>Recorded: <b>HYP</b> · top pick <b>HYP</b> ✓ matches<br><span class="note">The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model&#x27;s best guess is: hypertrophy pattern.</span> · <a href="assets/reports/ecg_05.html">full report</a></figcaption></figure>
+<figure><img src="assets/samples/ecg_06.jpg" alt="ECG example, good photo" loading="lazy"><figcaption><span class="badge b-image-only">image-only</span>good photo<br>Recorded: <b>NORM</b> · top pick <b>NORM</b> ✓ matches<br><span class="note">Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: normal ECG.</span> · <a href="assets/reports/ecg_06.html">full report</a></figcaption></figure>
+<figure><img src="assets/samples/ecg_07.jpg" alt="ECG example, good photo" loading="lazy"><figcaption><span class="badge b-image-only">image-only</span>good photo<br>Recorded: <b>STTC</b> · top pick <b>STTC</b> ✓ matches<br><span class="note">Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: ST/T-wave change.</span> · <a href="assets/reports/ecg_07.html">full report</a></figcaption></figure>
+<figure><img src="assets/samples/ecg_08.jpg" alt="ECG example, fair photo" loading="lazy"><figcaption><span class="badge b-image-only">image-only</span>fair photo<br>Recorded: <b>MI + CD</b> · top pick <b>CD</b> ✓ matches<br><span class="note">Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: conduction disturbance.</span> · <a href="assets/reports/ecg_08.html">full report</a></figcaption></figure>
+<figure><img src="assets/samples/ecg_09.jpg" alt="ECG example, fair photo" loading="lazy"><figcaption><span class="badge b-image-only">image-only</span>fair photo<br>Recorded: <b>NORM</b> · top pick <b>NORM</b> ✓ matches<br><span class="note">Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: normal ECG.</span> · <a href="assets/reports/ecg_09.html">full report</a></figcaption></figure>
+<figure><img src="assets/samples/ecg_10.jpg" alt="ECG example, bad photo" loading="lazy"><figcaption><span class="badge b-rejected">rejected</span>bad photo<br>Recorded: <b>NORM</b> · asked for a better photo<br><span class="note">This image is not clear enough to read safely. Please retake it. Lay the page flat, use even light without shadows, keep the whole printout in the frame, and hold the camera steady.</span> · <a href="assets/reports/ecg_10.html">full report</a></figcaption></figure>
+<figure><img src="assets/samples/ecg_11.jpg" alt="ECG example, bad photo" loading="lazy"><figcaption><span class="badge b-rejected">rejected</span>bad photo<br>Recorded: <b>STTC</b> · asked for a better photo<br><span class="note">This image is not clear enough to read safely. Please retake it. Lay the page flat, use even light without shadows, keep the whole printout in the frame, and hold the camera steady.</span> · <a href="assets/reports/ecg_11.html">full report</a></figcaption></figure></div>
+  <p class="note" style="margin-top:18px">Isoline works best on pictures like these examples. It was trained on rendered ECGs, not real clinic photos, and it is a learning project, not a medical device.</p>
+</div></section>
 
 <section id="how"><div class="wrap">
   <h2>How it works</h2>
@@ -105,26 +141,6 @@ footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);f
 <figure><img src="assets/policy_tradeoff.png" alt="Answering less, but more reliably" loading="lazy"><figcaption class="note">Answering less, but more reliably</figcaption></figure>
 <figure><img src="assets/image_studio_preview.png" alt="One ECG: clean print and three phone-photo severities" loading="lazy"><figcaption class="note">One ECG: clean print and three phone-photo severities</figcaption></figure></div>
 </div></section>
-
-<section id="demo"><div class="wrap">
-  <h2>Try it</h2>
-  <p class="lead">The live demo is being set up. Real outputs on test pictures are below.</p>
-  
-  <h3 style="margin-top:34px">Real outputs on test pictures</h3>
-  <p class="note">These pictures were drawn at random from the test split (not hand-picked), and the results below are what the model returned, including its mistakes. Click a picture's report link to see the full one-page report.</p>
-  <div class="gallery"><figure><img src="assets/samples/ecg_01.jpg" alt="ECG example, clean print" loading="lazy"><figcaption><span class="badge b-flagged">flagged</span>clean print<br>Recorded: <b>NORM</b> · top pick <b>NORM</b> ✓ matches<br><span class="note">The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model&#x27;s best guess is: normal ECG.</span> · <a href="assets/reports/ecg_01.html">full report</a></figcaption></figure>
-<figure><img src="assets/samples/ecg_02.jpg" alt="ECG example, clean print" loading="lazy"><figcaption><span class="badge b-flagged">flagged</span>clean print<br>Recorded: <b>MI</b> · top pick <b>MI</b> ✓ matches<br><span class="note">The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model&#x27;s best guess is: myocardial infarction pattern.</span> · <a href="assets/reports/ecg_02.html">full report</a></figcaption></figure>
-<figure><img src="assets/samples/ecg_03.jpg" alt="ECG example, clean print" loading="lazy"><figcaption><span class="badge b-flagged">flagged</span>clean print<br>Recorded: <b>STTC</b> · top pick <b>NORM</b> ✗ does not match<br><span class="note">The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model&#x27;s best guess is: normal ECG.</span> · <a href="assets/reports/ecg_03.html">full report</a></figcaption></figure>
-<figure><img src="assets/samples/ecg_04.jpg" alt="ECG example, clean print" loading="lazy"><figcaption><span class="badge b-reliable">reliable</span>clean print<br>Recorded: <b>CD</b> · top pick <b>CD</b> ✓ matches<br><span class="note">Both checks agree. The most likely finding is: conduction disturbance.</span> · <a href="assets/reports/ecg_04.html">full report</a></figcaption></figure>
-<figure><img src="assets/samples/ecg_05.jpg" alt="ECG example, clean print" loading="lazy"><figcaption><span class="badge b-flagged">flagged</span>clean print<br>Recorded: <b>HYP</b> · top pick <b>HYP</b> ✓ matches<br><span class="note">The picture and the rebuilt waveform point to different answers, so treat this as uncertain. The image model&#x27;s best guess is: hypertrophy pattern.</span> · <a href="assets/reports/ecg_05.html">full report</a></figcaption></figure>
-<figure><img src="assets/samples/ecg_06.jpg" alt="ECG example, good photo" loading="lazy"><figcaption><span class="badge b-image-only">image-only</span>good photo<br>Recorded: <b>NORM</b> · top pick <b>NORM</b> ✓ matches<br><span class="note">Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: normal ECG.</span> · <a href="assets/reports/ecg_06.html">full report</a></figcaption></figure>
-<figure><img src="assets/samples/ecg_07.jpg" alt="ECG example, good photo" loading="lazy"><figcaption><span class="badge b-image-only">image-only</span>good photo<br>Recorded: <b>STTC</b> · top pick <b>STTC</b> ✓ matches<br><span class="note">Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: ST/T-wave change.</span> · <a href="assets/reports/ecg_07.html">full report</a></figcaption></figure>
-<figure><img src="assets/samples/ecg_08.jpg" alt="ECG example, fair photo" loading="lazy"><figcaption><span class="badge b-image-only">image-only</span>fair photo<br>Recorded: <b>MI + CD</b> · top pick <b>CD</b> ✓ matches<br><span class="note">Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: conduction disturbance.</span> · <a href="assets/reports/ecg_08.html">full report</a></figcaption></figure>
-<figure><img src="assets/samples/ecg_09.jpg" alt="ECG example, fair photo" loading="lazy"><figcaption><span class="badge b-image-only">image-only</span>fair photo<br>Recorded: <b>NORM</b> · top pick <b>NORM</b> ✓ matches<br><span class="note">Only the image model could read this one, because the photo is not lined up well enough to rebuild the waveform. Its best guess is: normal ECG.</span> · <a href="assets/reports/ecg_09.html">full report</a></figcaption></figure>
-<figure><img src="assets/samples/ecg_10.jpg" alt="ECG example, bad photo" loading="lazy"><figcaption><span class="badge b-rejected">rejected</span>bad photo<br>Recorded: <b>NORM</b> · asked for a better photo<br><span class="note">This image is not clear enough to read safely. Please retake it. Lay the page flat, use even light without shadows, keep the whole printout in the frame, and hold the camera steady.</span> · <a href="assets/reports/ecg_10.html">full report</a></figcaption></figure>
-<figure><img src="assets/samples/ecg_11.jpg" alt="ECG example, bad photo" loading="lazy"><figcaption><span class="badge b-rejected">rejected</span>bad photo<br>Recorded: <b>STTC</b> · asked for a better photo<br><span class="note">This image is not clear enough to read safely. Please retake it. Lay the page flat, use even light without shadows, keep the whole printout in the frame, and hold the camera steady.</span> · <a href="assets/reports/ecg_11.html">full report</a></figcaption></figure></div>
-</div></section>
-
 <section id="data"><div class="wrap">
   <h2>Dataset and code</h2>
   <div class="two">
@@ -146,9 +162,9 @@ python predict.py --image samples/ecg_01.jpg --report report.html</code></pre>
   <ul class="links">
     <li><a href="assets/Isoline_Report.pdf"><b>Project report</b><span>Problem, data, architecture, training, results</span></a></li>
     <li><a href="assets/Isoline_Slides.pdf"><b>Presentation</b><span>Slides used in the video</span></a></li>
-    <li><a href="#"><b>YouTube video</b><span>Voice-over walkthrough</span></a></li>
+    <li><a href=""><b>YouTube video</b><span>Voice-over walkthrough</span></a></li>
     <li><a href="https://github.com/talhahSalman/isoline-ecg"><b>GitHub repository</b><span>Code, weights, notebook</span></a></li>
-    <li><a href="#"><b>LinkedIn post</b><span>Project announcement</span></a></li>
+    <li><a href=""><b>LinkedIn post</b><span>Project announcement</span></a></li>
   </ul>
 </div></section>
 
